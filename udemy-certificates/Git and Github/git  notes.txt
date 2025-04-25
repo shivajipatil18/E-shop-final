@@ -1,0 +1,172 @@
+Git version control
+when u working with digital files wheather it is doxs word or js files probality dont finish all
+your work once  in this you want to manage and track changes in this files in your version control
+
+Git
+Git Typically reffers to the entire project( with capital G)
+git is the actual program used( with capital g)
+
+To check configuration detail use the following commadnds
+git config user.name
+git config user.email
+------------------------------------------------------------------
+creating git repogitory
+The main place we track changes and manage our files that are using Git called an repogitory.
+ 
+ git init
+ > This comand is used to initialize Repository on your local machine
+ > only need to run this comand once per project
+ git status 
+  > this comand is used  to report back status of your Git Repository 
+To change directory  use command 
+
+ > cd <directoryname>
+  To create a repo use a command 
+  > mkdir <repo-name>
+  
+  =========================================================================
+  
+  git add 
+  > changing code in the repository 
+  git commit
+  >comming these changes 
+  git push and git pull
+  > pushing and pulling these changes 
+  git status git log and git diff
+  checking status log and changes 
+	==============================================================================
+	
+	working directory 
+	> The file which we are working is called working directory.
+	
+	staging area 
+	> git add .  used to add all files into the staging area.
+	
+	Repository
+	git commit -m <msg>
+	git pushing
+	push the files to repository
+	
+git log 
+>  it shows list of all the commit made to the repo
+	
+	
+	git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/shivajipatil18/Brand-store-project.git
+git push -u origin main
+…or push an existing repository from the command line
+git remote add origin https://github.com/shivajipatil18/Brand-store-project.git
+git branch -M main
+git push -u origin main
+
+======================================================================
+git pull and git fetch
+>These are the two options  of getting repo changes from a remove branch to local
+>using git fetch make sense when u workingwith others and want to see what changes they have made 
+but are not ready to overwrite your own files yet.
+>also if u r simply working yourself , u may want  to fetch only remote changes without overwwriting 
+your latest work.
+git fetch <remote> <branch>
+or git fetch origin <branch>
+
+git pull
+> using git pull make sense when u want to directory grab cha from the remote branch 
+and directly merge into yo current branch.
+
+> this means u can directly update the files in your working directory to match up and merge 
+with the remote branch  
+===================================================================================
+branchs and working with others 
+
+
+
+> Branches allow us to  organise the repogitory and split  it so multiple people can work on it 
+or solo developer can work on diffrent aspect of the project on a sapated work
+> ranches are just pointers to the commits 
+>when u create a branch all git needs to do a create a new pointer
+it does not change the repo at any other way.
+
+HEAD
+in all of our example so for,HEAD has always been pointing to the most recent commit in the master branch
+
+To delete a branch 
+git branch -d <branch-to-delete-name>
+you cannot delete a branch you are checkedout at 
+u also get a warning if the branch is not merged
+u can confirmed u want to do this always with -D
+
+==============================================================
+Merging branches and conflicts 
+Now that we understand the creating a new  branches let shilft focus on merging branchs back together.
+
+let explore a simple type of merge where a new branch is created but the orignal branch it 
+stemmed from has no additonal commits
+this is known as a fast forword merge
+====================================================
+Merge conflicts 
+However ,there will be many instances where there are conflicts for example changes in the file 
+on lines that are different between the branches 
+these are known as a merge conflicts and we need to resolve the conflicts between the branches
+in order to merge them. 
+
+Merge in practice 
+
+Fast Forword Merge
+Multiple branch commit merge with NO conflict 
+multiple branch commit merge with conflict 
+
+
+
+
+
+
+
+
+
+
+
+
+GIT IMPORTANT COMMNANDS 
+
+Git commads to push the code 
+1) create a repo 
+mkdir repoName
+
+2 )  git add .
+3)git commit -m "msg"
+4)git remote add origin <repourl>
+5)git branch  -M main
+6) git push -u origin main
+
+
+To remove untracked files from git 
+follow these steps
+1)In the root of your project directory (where your .git folder is located), create a .gitignore file if it doesn't already exist.
+
+Add the following common entries to exclude unnecessary files and directories:
+
+2)
+Remove Already Tracked Files: If these files are already being tracked by Git, you need to remove them from the Git index without deleting them from your local file system. Run the following commands:
+
+git rm -r --cached .
+git add .
+git commit -m "Remove unnecessary files and update .gitignore"
+git push origin <branch-name>
+
+
+This pulls the remote changes and rebases your local commits on top of them. Rebasing helps keep a clean history.
+
+git pull origin main --rebase
+
+
+To delete a branch use
+  git branch -d <branch-to-delete-name>
+
+check all commits use the command 
+git log online
+use trestore commit from 2 commit backq
+git restore --source HAED~2 file_name 
+

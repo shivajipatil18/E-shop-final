@@ -1,0 +1,211 @@
+Introduction to enzyme 
+it create an virtual dom for testing
+allows testing without a browser
+both create a virtual DOm 
+enzyme support issolation testing
+ex shallow rendering
+
+why choose enzyme over testing library 
+more traditional testing style tests tytly couped with code 
+tests are easy to dignose 
+==================================================
+Shallow render 
+It render component with only one level deep
+render parent but use placeholders for children
+
+Why Use Enzyme?
+✅ Simple API for testing components
+✅ Mimics real DOM behavior for full component testing
+✅ Shallow rendering isolates components for focused unit testing
+✅ Supports querying and manipulating component trees
+✅ Works well with Jest for comprehensive test coverage
+
+comand to install enzyme unofficially
+npm install --save-dev @cfaester/enzyme-adapter-react-18
+
+Then configure it in setupTests.js:
+
+import { configure } from 'enzyme';
+import Adapter from '@cfaester/enzyme-adapter-react-18';
+
+configure({ adapter: new Adapter() });
+
+1. Remove Conflicting Packages
+Run the following commands to remove the problematic package:
+
+sh
+Copy
+Edit
+npm uninstall @testing-library/react
+✅ 2. Install Compatible Version of @testing-library/react
+Since you're using React 17, install a version that supports it. Use version 12.1.5, which is compatible with React 17:
+
+sh
+Copy
+Edit
+npm install --save-dev @testing-library/react@12.1.5
+✅ 3. (Optional) Install Other Testing Libraries
+If you need additional testing libraries, install them as well:
+
+sh
+Copy
+Edit
+npm install --save-dev @testing-library/jest-dom @testing-library/user-event
+✅ 4. (If Needed) Force Install with Legacy Peer Deps
+If the error persists, try forcing the installation with:
+
+sh
+Copy
+Edit
+npm install --legacy-peer-deps
+or
+
+sh
+Copy
+Edit
+npm install --force
+(⚠️ Using --force can sometimes install incompatible versions, so use it as a last resort.)
+
+✅ 5. Clear Cache & Reinstall Dependencies
+If the issue persists, try clearing the cache and reinstalling:
+
+sh
+Copy
+Edit
+npm cache clean --force
+rm -rf node_modules package-lock.json
+npm install
+✅ Final Step: Run Tests
+Once installed, test if everything is working:
+
+sh
+Copy
+Edit
+npm test
+=====================================================================
+1. Install Enzyme
+Run the following command to install Enzyme:
+
+sh
+Copy
+Edit
+npm install enzyme
+2. Install the React 17 Adapter
+Since the official Enzyme adapter for React 17 was never released, use @wojtekmaj/enzyme-adapter-react-17:
+
+sh
+Copy
+Edit
+npm install --save-dev @wojtekmaj/enzyme-adapter-react-17
+3. Install Additional Dependencies
+For better compatibility, install enzyme-to-json to enable snapshot testing:
+
+sh
+Copy
+Edit
+npm install --save-dev enzyme-to-json
+4. Configure Enzyme in Your Project
+Create a setup file for Jest (if you don’t already have one).
+
+For Create React App (CRA)
+Create or update src/setupTests.js:
+
+js
+Copy
+Edit
+import { configure } from 'enzyme';
+import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
+
+configure({ adapter: new Adapter() });
+For Custom Jest Configuration
+If you're using a custom Jest setup, update jest.config.js:
+
+js
+Copy
+Edit
+module.exports = {
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.js'],
+};
+5. Verify Installation
+Run the following command to check if Enzyme is working:
+
+sh
+Copy
+Edit
+npm test
+or
+
+sh
+Copy
+Edit
+yarn test
+If everything is set up correctly, you can now write and run Enzyme tests in your React 17 project. 🚀
+
+Let me know if you need further assistance!
+
+
+
+
+
+
+
+with react 17 use 
+this in index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+===========================================================
+follow   and try
+            🔥 Step 1: Uninstall the Old Adapter
+Run the following command to remove @wojtekmaj/enzyme-adapter-react-17:
+
+npm uninstall @wojtekmaj/enzyme-adapter-react-17
+or if you're using Yarn:
+
+bash
+Copy
+Edit
+yarn remove @wojtekmaj/enzyme-adapter-react-17
+🚀 Step 2: Install the New Adapter
+Now, install @cfaester/enzyme-adapter-react-17:
+
+bash
+Copy
+Edit
+npm install --save-dev enzyme @cfaester/enzyme-adapter-react-17
+or with Yarn:
+
+bash
+Copy
+Edit
+yarn add -D enzyme @cfaester/enzyme-adapter-react-17
+🛠 Step 3: Update setupTests.js
+If your test setup file (setupTests.js or setupTests.ts) still references the old adapter, update it like this:
+
+javascript
+Copy
+Edit
+import { configure } from 'enzyme';
+import Adapter from '@cfaester/enzyme-adapter-react-17';
+
+configure({ adapter: new Adapter() });
+✅ Step 4: Verify Setup
+Run your tests to make sure everything is working:
+
+npm test
+
+
+in this section what we did
+====================================================================================================
+set up a simple react app with jest and enzyme 
+used enzymes  shallow function to render a component\
+Tested that required DOM elements where renderd using find method 
+use enzymes .text() method to exxtract the test of an elements
+use simulate to interact with rendered elements

@@ -1,0 +1,65 @@
+.topUl {
+    display: flex;
+    justify-content: space-around;
+    padding: 15px; /* Increased padding */
+}
+
+.topUl li {
+    position: relative;
+}
+
+.topUl li ul:hover {
+    display: block;
+    background-color: black;
+    color: white;
+}
+
+.topUl a {
+    display: block;
+    padding: 15px; /* Increased padding */
+    color: white;
+    font-weight: 700;
+    font-size: 22px; /* Increased font size */
+}
+
+p {
+    display: block;
+    padding: 15px; /* Increased padding */
+    color: white;
+    font-weight: 700;
+    font-size: 45px; /* Increased font size */
+}
+
+.bottomUl {
+    display: block;
+    position: absolute;
+    background-color: black;
+    right: 0;
+    top: 125px; /* Adjusted top position */
+    padding: 10px; /* Added padding */
+}
+
+.bottomUl li {
+    width: 12rem; /* Increased width */
+    padding: 12px; /* Increased padding */
+    color: white;
+    font-weight: 600; /* Slightly bolder */
+    border-bottom: 1px solid orange;
+    cursor: pointer;
+    font-size: 18px; /* Increased font size */
+}
+
+@media screen and (max-width: 575px) {
+    .topUl {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 10px; /* Adjusted padding */
+    }
+
+    .topUl li {
+        width: 80%;
+        border-bottom: 1px solid orange;
+        padding: 12px; /* Increased padding */
+    }
+}

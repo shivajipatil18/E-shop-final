@@ -1,0 +1,22 @@
+Static checking
+
+TypeScript detects errors in our code without running it this is called static checking
+
+Why typescript
+Helps us find the errors
+analysis our code as we type 
+only exists in development
+
+==============================
+
+types  of types scripts
+
+Objects  tupple
+emmum
+arrays 
+functions 
+
+example const myvar:type=value
+
+Type interface refers to the Typescript compilers ability to infer types from certain values in your code 
+typepescript can remember a values type even if u didn't provide a type annotation and it will enforce that type moving forword 

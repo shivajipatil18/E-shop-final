@@ -1,0 +1,44 @@
+.container {
+  background-color: black;
+  width: 100%;
+  color: orange;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+form {
+  width: 90%;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+}
+.Top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.search {
+  width: 70%;
+  padding: 10px;
+  border-radius: 10px;
+}
+button {
+  padding: 10px;
+  background-color: orange !important;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+@media screen and (max-width: 575) {
+  form {
+    flex-direction: column;
+  }
+  .search {
+    width: 80%;
+  }
+  .Top {
+    flex-direction: column;
+  }
+}
