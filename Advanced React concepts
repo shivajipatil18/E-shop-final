@@ -1,0 +1,1354 @@
+
+ React Performance Optimization
+✅ Memoization Techniques
+
+React.memo() – Optimizes functional components by preventing re-renders.
+useMemo() – Memoizes expensive calculations.
+useCallback() – Memoizes functions to avoid unnecessary re-creation.
+✅ Virtualization
+
+Use React Virtualized or React Window to render large lists efficiently.
+✅ Code Splitting & Lazy Loading
+
+Use React.lazy() and Suspense to load components on demand.
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+✅ Virtual DOM
+
+React uses a virtual DOM to optimise  the rendering process  The virtual DOM is  lightweight copy of the actual DOM and any changes  made in the UI first done on the virtual DOM React then calculate the difference between the previous dom and updated virtual DOM and efficiency updates only the necessary parts of the actual DOM
+
+EX
+
+import { useState } from "react";
+
+
+
+function VirtualDOMExample() {
+
+  const [count, setCount] = useState(0);
+
+
+
+  console.log("Component re-rendered!"); 
+
+
+
+  return (
+
+    <div>
+
+      <h2>Counter: {count}</h2>
+
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+
+    </div>
+
+  );
+
+}
+
+
+
+export default VirtualDOMExample;
+
+Explanation
+
+Every time you click the button, React updates the state 
+
+React creates a new Virtual DOM tree and compares it with the previous version.
+
+React only updates the h2 element in the actual DOM instead of reloading the entire page.
+
+UseState Hook
+useState Hook  is used to mange the state in the component 
+
+import React, { useState } from "react";
+
+const UseStateExample = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "", // Fixed spelling
+  });
+  const [submitted, setSubmitted] = useState(false);
+  const [submittedData, setSubmittedData] = useState(null); // Store submitted data
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form submitted:", formData);
+    setSubmitted(true);
+    setSubmittedData(formData); // Store the submitted data
+    setFormData({ name: "", email: "", message: "" }); // Clear form fields
+  };
+
+  return (
+    <div>
+      <h1 style={{ color: "green" }}>Contact Form useState Example</h1>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Name</label>
+          <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+        </div>
+        <br />
+        <div>
+          <label>Email</label>
+          <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+        </div>
+        <br />
+        <div>
+          <label>Message</label>
+          <input type="text" name="message" value={formData.message} onChange={handleChange} required />
+        </div>
+        <br />
+        <button type="submit">Submit</button>
+      </form>
+
+      {submitted && submittedData && (
+        <div style={{ marginTop: "20px", padding: "10px", border: "1px solid #ddd" }}>
+          <h2>Submitted Data</h2>
+          <p><strong>Name:</strong> {submittedData.name}</p>
+          <p><strong>Email:</strong> {submittedData.email}</p>
+          <p><strong>Message:</strong> {submittedData.message}</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default UseStateExample;
+
+USE EFFECT HOOK
+USEFFECT  Hook is used to handle the side Effects of a functional component 
+for example, Fetching the data from the api
+
+import React, { useState,useEffect } from 'react'
+import axios from 'axios'
+
+const UseEffectExample = () => {
+    const [users,setUsers]=useState([])
+    const [loading,setLoading]=useState(false)
+    const [error,setError]=useState(null)
+
+    const getUsers=async()=>{
+        try {
+            setLoading(true)
+            const  response= await axios('https://jsonplaceholder.typicode.com/users')
+            console.log(response)
+            setUsers(response.data)
+            setLoading(false)
+        } catch (error) {
+            console.log(error)
+            setError(error)
+            setLoading(false)
+        }
+    }
+    useEffect(()=>{
+        getUsers()
+    },[])
+
+  return (
+    <div>
+ <h1 style={{ color: "green" }}>UseEffect Example </h1>
+ {loading && <h1>Loading...</h1>}
+{error && <h1>something went wrong...</h1>}
+{users?.map((user)=>{
+    return(
+        <div key={user.id}>
+            {user.name}
+        </div>
+    )
+})}
+    </div>
+  )
+}
+
+export default UseEffectExample
+
+
+USEREDUCER HOOK
+useReducer hook is alternative of useState hook for managing the complex state logic it is particularly useful when 
+The next state depends on previous
+state logic is complex and and involve multiple sub values
+ if  you want predictable state transition similar to redux but on a small scale
+
+import React, { useReducer } from "react";
+
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "INCREMENT":
+      return { count: state.count + 1 };
+    case "DECREMENT":
+      return { count: state.count - 1 };
+    case "RESET":
+      return { count: 0 };
+    default:
+      return state;
+  }
+};
+
+
+const initialState = { count: 0 };
+
+const Counter = () => {
+  /
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  return (
+    <div>
+      <h2>Counter: {state.count}</h2>
+      <button onClick={() => dispatch({ type: "INCREMENT" })}>+</button>
+      <button onClick={() => dispatch({ type: "DECREMENT" })}>-</button>
+      <button onClick={() => dispatch({ type: "RESET" })}>Reset</button>
+    </div>
+  );
+};
+
+export default Counter;
+
+
+USEREF HOOK
+
+Refs (short for "references") provide a way to access DOM nodes or React elements created in the render method directly.
+
+import React, { useRef, useState } from "react";
+
+const FocusInput = () => {
+  const inputRef = useRef(null);
+  const [inputValue, setInputValue] = useState(""); 
+
+  const focusInput = () => {
+    inputRef.current.focus();
+  };
+
+  const showValue = () => {
+    setInputValue(inputRef.current.value); 
+  };
+
+  return (
+    <div>
+      <input ref={inputRef} type="text" />
+      <button onClick={focusInput}>Focus Input</button>
+      <button onClick={showValue}>Show Value</button>
+      <h2>Entered Value: {inputValue}</h2>
+    </div>
+  );
+};
+
+export default FocusInput;
+
+
+USECONTEXT HOOK
+The useContext hook allows consuming values from React's Context API.
+
+import React, { createContext, useContext } from "react";
+
+const ThemeContext = createContext("light");
+
+function ThemedComponent() {
+  const theme = useContext(ThemeContext);
+  return <p>Current theme: {theme}</p>;
+}
+
+export default function App() {
+  return (
+    <ThemeContext.Provider value="dark">
+      <ThemedComponent />
+    </ThemeContext.Provider>
+  );
+}
+
+USELAYOUTEFFECT
+The useLayoutEffect hook in React is similar to useEffect, but it fires synchronously after DOM mutations and before the browser paints the screen. This makes it useful for scenarios where you need to measure DOM elements and apply changes before the user sees them.
+
+
+import React, { useState, useLayoutEffect, useRef } from "react";
+
+const Box = () => {
+  const [width, setWidth] = useState(0);
+  const boxRef = useRef(null);
+
+  useLayoutEffect(() => {
+    if (boxRef.current) {
+      setWidth(boxRef.current.offsetWidth);
+    }
+  }, []);
+
+  return (
+    <div>
+      <div
+        ref={boxRef}
+        style={{
+          width: "50%",
+          background: "lightblue",
+          padding: "20px",
+          textAlign: "center",
+        }}
+      >
+        Resize me!
+      </div>
+      <p>Box Width: {width}px</p>
+    </div>
+  );
+};
+
+export default Box;
+
+ 9. useImperativeHandle Hook
+Customizes the instance value exposed when using React.forwardRef.
+
+
+    import { useRef, useImperativeHandle, forwardRef } from 'react';
+
+const Input = forwardRef((props, ref) => {
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      inputRef.current.focus();
+    }
+  }));
+  const inputRef = useRef();
+  return <input ref={inputRef} />;
+});
+
+function Parent() {
+  const inputRef = useRef();
+  return (
+    <div>
+      <Input ref={inputRef} />
+      <button onClick={() => inputRef.current.focus()}>Focus Input</button>
+    </div>
+  );
+}
+
+
+useDeferredValue
+Defers updating a state to avoid UI lag in heavy renders.
+
+Example 
+
+    import { useState, useDeferredValue } from 'react';
+
+function Search({ value }) {
+  const deferredValue = useDeferredValue(value);
+
+  return <p>Searching for: {deferredValue}</p>;
+}
+
+function App() {
+  const [query, setQuery] = useState('');
+
+  return (
+    <div>
+      <input onChange={(e) => setQuery(e.target.value)} placeholder="Type something..." />
+      <Search value={query} />
+    </div>
+  );
+}
+
+useTransition
+Helps in avoiding UI blocking by prioritizing state updates.
+
+import { useState, useTransition } from 'react';
+
+
+
+function App() {
+
+  const [list, setList] = useState([]);
+
+  const [isPending, startTransition] = useTransition();
+
+
+
+  const handleClick = () => {
+
+    startTransition(() => {
+
+      setList(Array(20000).fill('Item'));
+
+    });
+
+  };
+
+
+
+  return (
+
+    <div>
+
+      <button onClick={handleClick}>Load Items</button>
+
+      {isPending ? <p>Loading...</p> : list.map((item, index) => <p key={index}>{item}</p>)}
+
+    </div>
+
+  );
+
+}
+
+
+useId
+Generates a unique ID for accessibility purposes
+
+import { useId } from 'react';
+
+function Form() {
+  const id = useId();
+  return (
+    <div>
+      <label htmlFor={id}>Name:</label>
+      <input id={id} />
+    </div>
+  );
+}
+
+useParams hook
+The useParams hook is used in React Router to get dynamic route parameters from the URL. It allows you to access values from the route dynamically.
+
+
+
+10. useDebugValue Hook
+The useDebugValue hook displays custom hook values in React DevTools.
+
+Example:
+
+
+import React, { useState, useDebugValue } from "react";
+
+function useCustomHook(initialValue) {
+  const [value, setValue] = useState(initialValue);
+  useDebugValue(value > 5 ? "High" : "Low");
+
+  return [value, setValue];
+}
+
+export default function App() {
+  const [count, setCount] = useCustomHook(0);
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </div>
+  );
+}
+
+CUSTOME HOOK
+This custom hook, useFetch, helps fetch data from an API and manage loading and error states.
+
+import { useState, useEffect } from "react";
+
+function useFetch(url) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Network response was not ok");
+        const result = await response.json();
+        setData(result);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [url]); // Re-run when `url` changes
+
+  return { data, loading, error };
+}
+
+export default useFetch;
+
+
+
+PostList.js
+2
+import React from "react";
+import useFetch from "./useFetch"; 
+function PostList() {
+  const { data, loading, error } = useFetch("https://jsonplaceholder.typicode.com/posts");
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
+  return (
+    <ul>
+      {data.map((post) => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  );
+}
+
+export default PostList;
+
+==============================================================================================
+React Portals:
+React portals provide a way to render a children into a dom node  that exists outside the parent 
+Component DOM hierarchy
+
+Tooltips modules dropdown and popup often need  a break out of there parent container fos styleing z-index 
+or possitioning purpuse 
+
+Example 
+index.html
+
+<body>
+  <div id="root"></div>
+  <div id="modal-root"></div> 
+</body>
+
+Modal.js
+
+import React from "react";
+import ReactDOM from "react-dom";
+
+const Modal = ({ children }) => {
+  const modalRoot = document.getElementById("modal-root");
+  return ReactDOM.createPortal(
+    <div className="modal">{children}</div>,
+    modalRoot
+  );
+};
+
+export default Modal;
+
+App.js
+
+import React, { useState } from "react";
+import Modal from "./Modal";
+
+const App = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  return (
+    <div>
+      <h1>React Portals Demo</h1>
+      <button onClick={() => setShowModal(true)}>Open Modal</button>
+
+      {showModal && (
+        <Modal>
+          <div className="modal-content">
+            <h2>This is a Modal</h2>
+            <button onClick={() => setShowModal(false)}>Close</button>
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+};
+
+export default App;
+============================================================================================
+Higher order components(HOC)
+Higher order component is a function that taks a component and return a new  component
+or in otherwords
+HOC is a function that adds extra functionality to a component without modifying the original one 
+
+Commone useCases of HOC
+code reuse ,Login abstraction  and cross cutting concerns , conditional rendering.
+
+Example 
+WithAuth.js
+
+import React from "react";
+import { Navigate } from "react-router-dom";
+
+const withAuth = (WrappedComponent) => {
+  return (props) => {
+    const isAuthenticated = localStorage.getItem("auth") === "true";
+
+    if (!isAuthenticated) {
+      return <Navigate to="/login" />;
+    }
+
+    return <WrappedComponent {...props} />;
+  };
+};
+
+export default withAuth;
+
+Dashboard.js
+const Dashboard = () => {
+  return <h2>Welcome to the Dashboard!</h2>;
+};
+export default Dashboard
+
+ProtectedDashboard.js
+import withAuth from "./withAuth";
+
+const ProtectedDashboard = withAuth(Dashboard);
+
+React Performance Optimization
+✅ Memoization Techniques
+React.memo() –  
+What is React.memo?
+React.memo is a higher-order component (HOC) that helps optimize the performance of functional components by preventing unnecessary re-renders. It works by memorizing the output of a component and only re-rendering it if its props have changed.
+
+Why Use React.memo?
+By default, React re-renders a component whenever its parent re-renders, even if the component's props haven't changed. This can cause performance issues in large applications. React.memo It helps avoid this by ensuring that a component only updates when its props change.
+
+    Example of React.memo
+ChildComponent.js
+import React, { useState, memo } from "react";
+
+const ChildComponent = memo(({ message }) => {
+  console.log("ChildComponent Rendered!");
+  return <p>{message}</p>;
+});
+App.js
+const App = () => {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <h2>Counter: {count}</h2>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <ChildComponent message="Hello from Child Component!" />
+    </div>
+  );
+};
+
+export default App;
+
+ 
+
+How React.memo Solves the Problem
+Now, when you click "Increment":
+
+App re-renders (because of state changes).
+
+ChildComponent does not re-render unless its message prop changes.
+useMemo() – Memoizes expensive calculations.
+What is useMemo?
+useMemo is a React Hook that memoizes a computed value. It only re-computes the value when its dependencies change, preventing unnecessary calculations and improving performance.
+
+Why Use useMemo?
+Optimizes Expensive Calculations – Avoids recalculating values unless necessary.
+Prevents Unnecessary Re-renders – Helps avoid re-rendering of child components when the computed value hasn't changed.
+Enhances Performance – Useful when working with large datasets or computationally expensive operations.
+
+Example 
+
+ExpensiveComponent .js
+// First Child Component - Expensive Computation
+import React, { useState, useMemo } from "react";
+
+
+const ExpensiveComponent = ({ number }) => {
+  const computeExpensiveValue = (num) => {
+    console.log("Running expensive computation...");
+    for (let i = 0; i < 1000000000; i++) {} // Simulating a heavy task
+    return num * 10;
+  };
+
+  const computedValue = useMemo(() => computeExpensiveValue(number), [number]);
+
+  return <h3>Computed Value: {computedValue}</h3>;
+};
+
+ Second Child Component - Displays Counter
+CounterComponent .js
+const CounterComponent = ({ count }) => {
+  console.log("CounterComponent Rendered!");
+  return <h3>Counter: {count}</h3>;
+};
+
+
+// Parent Component - Manages State
+App .js
+const App = () => {
+  const [count, setCount] = useState(0);
+  const [number, setNumber] = useState(5);
+
+  return (
+    <div>
+      <button onClick={() => setCount(count + 1)}>Increment Counter</button>
+
+      {/* Counter Component */}
+      <CounterComponent count={count} />
+
+      <h2>Enter Number:</h2>
+      <input
+        type="number"
+        value={number}
+        onChange={(e) => setNumber(parseInt(e.target.value) || 0)}
+      />
+
+      {/* Expensive Calculation Component */}
+      <ExpensiveComponent number={number} />
+    </div>
+  );
+};
+
+export default App;
+
+
+How This Works
+Parent Component (App):
+
+Manages two states: count (for the counter) and number (for the input).
+Renders two child components.
+First Child (ExpensiveComponent):
+
+Uses useMemo to prevent unnecessary recalculations.
+Only recalculates when number changes.
+Second Child (CounterComponent):
+
+Simply displays the counter.
+Re-renders when count changes but does not affect the expensive computation.
+      useCallback() – Memoizes functions to avoid unnecessary re-creation  
+    Example
+Child Component - Renders a Button
+    import React, { useState, useCallback } from "react";
+const ButtonComponent = React.memo(({ handleClick }) => {
+  console.log("ButtonComponent Rendered!");
+  return <button onClick={handleClick}>Increment</button>;
+});
+
+Parent Component - Manages State
+const App = () => {
+  const [count, setCount] = useState(0);
+ const increment = useCallback(() => {
+    setCount((previous) => prevCount + 1);
+  }, []);
+
+  return (
+    <div>
+      <h2>Counter: {count}</h2>
+      {/* Passing Memoized Function */}
+      <ButtonComponent handleClick={increment} />
+    </div>
+  );
+};
+
+export default App;
+
+======================================================================
+✅ Virtualization
+Virtualization is a technique used in React applications to efficiently render large lists by rendering only the visible items instead of the entire dataset. This improves performance by reducing DOM updates and memory usage.
+Example
+
+import React from "react";
+import { FixedSizeList as List } from "react-window";
+
+const data = Array.from({ length: 10000 }, (_, index) => `Item ${index + 1}`);
+
+const Row = ({ index, style }) => (
+  <div style={{ ...style, padding: "10px", borderBottom: "1px solid #ccc" }}>
+    {data[index]}
+  </div>
+);
+
+const VirtualizedList = () => {
+  return (
+    <List
+      height={400}         
+    itemCount={data.length}  
+      itemSize={35}     
+      width={"100%"}    
+    >
+      {Row}
+    </List>
+  );
+};
+
+export default VirtualizedList;
+
+
+✅ Code Splitting & Lazy Loading and Concurrent Rendering
+
+    Code Splitting is a technique that allows you to break down javascript code into small chunks. 
+    Lazy Loading ensures that these chunks are only loaded when they are needed.  This performance reduces the initial load time.
+
+Example 
+using React. lazy and suspense we can load components when it required
+
+import Reacr,{suspense lazy } from "react"
+const LazyComponent=(()=>import(./LazyComponent))
+function App(){
+return(
+<div>
+<h2> Lazy Loading example</h2>
+<Suspense fallback={<div>Loading</div>}>
+<LazyComponent/>
+</Suspense> 
+
+</div>
+)
+}
+export default App
+Concurrent Rendering in react 
+Concurrent Rending enables  React to work on multiple UI updates simultaneously, preventing UI Blocking and improving responsiveness. React achieve this by using useTransition or startTransition API
+
+Example 
+SearchComponent.js
+import React,{useState,useTransition ,Suspense} from "react";
+const dummyData=["Apple","Banana","Cherry","Kiwi"]
+const SearchResults=React.lazy(()=>import("./SearchResults"))
+
+const SearchComponent=()=>{
+const [query,setQuery]=useState("")
+const [isPending,startTransition]=useTransion()
+const [results,setResults]-useState([])
+return(
+    <>
+<h1>Concurrent Rendering  demo</h1>
+<input type="text",placeholder="search.."
+value={query}
+onChange={handleSearch}
+/>
+{isPending && <div> Loading....</div>}
+<suspense fallback={<div>Loading Results</div>}
+<SearchResults results={results}/>
+</Suspense>
+</>
+) 
+}
+export default SearchComponent
+
+SearchResults.js
+import React from "react"
+const SearchResults=()=>{
+return(
+<>
+<ul>
+{results.map((result,index)=>{
+<li key={index}>{result}</li>
+})}
+<ul>
+</>
+
+)
+} 
+export default SearchResults
+
+Import  SearchComponent in App.js
+
+App.js
+
+import React from "react";
+
+const App=()=>{
+import SearchComponent from "./SearchComponent"
+return (
+<>
+<SearchComponent/>
+</>
+
+)
+}
+
+Automatic Batching
+Batching means React combines multiple state updates into a single re-render to avoid unnecessary work.
+
+Example 
+import React, { useState } from "react";
+
+function Counter() {
+  const [count, setCount] = useState(0);
+  const [flag, setFlag] = useState(false);
+
+  const handleClick = () => {
+    setTimeout(() => {
+      setCount((c) => c + 1);
+      setFlag((f) => !f);
+      // In React 18: These are automatically batched into one render!
+    }, 1000);
+  };
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <p>Flag: {flag.toString()}</p>
+      <button onClick={handleClick}>Update</button>
+    </div>
+  );
+}
+
+When the "Update" button is clicked:
+
+A setTimeout is set to fire after 1 second (1000 ms).
+
+Inside the setTimeout:
+
+flag is toggled (true becomes false, and vice versa).
+
+count is incremented by 1.
+
+RenderProps
+A render Props is a technique for sharing logic between React Components using a function as a props 
+instead of using children in jsx element  u pass a function as a child  this function receive a data/state/methods and render the ui
+
+
+Example 
+MouseTracker.js 
+import React, { useState, useEffect } from 'react';
+
+function MouseTracker({ render }) {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    function handleMouseMove(e) {
+      setPosition({ x: e.clientX, y: e.clientY });
+    }
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  return (
+    <div style={{ height: '100vh' }}>
+      {render(position)} {/* This is the render prop */}
+    </div>
+  );
+}
+
+export default MouseTracker;
+
+App.jsx
+
+import React from 'react';
+import MouseTracker from './components/MouseTracker';
+
+function App() {
+  return (
+    <div>
+      <h2>Render Props Example</h2>
+      <MouseTracker
+        render={({ x, y }) => (
+          <p>The mouse position is: ({x}, {y})</p>
+        )}
+      />
+    </div>
+  );
+}
+
+export default App;
+
+
+Compound Components 
+Compound components are the components that work together to share the internal state 
+
+
+Example Toggle.js
+
+import React, { createContext, useContext, useState } from 'react';
+
+// Create context to share state
+const ToggleContext = createContext();
+
+function Toggle({ children }) {
+  const [on, setOn] = useState(false);
+  const toggle = () => setOn(!on);
+
+  return (
+    <ToggleContext.Provider value={{ on, toggle }}>
+      {children}
+    </ToggleContext.Provider>
+  );
+}
+
+// Subcomponents
+
+Toggle.On = function On({ children }) {
+  const { on } = useContext(ToggleContext);
+  return on ? children : null;
+};
+
+Toggle.Off = function Off({ children }) {
+  const { on } = useContext(ToggleContext);
+  return !on ? children : null;
+};
+
+Toggle.Button = function Button() {
+  const { toggle } = useContext(ToggleContext);
+  return <button onClick={toggle}>Toggle</button>;
+};
+
+export default Toggle;
+
+App.js 
+
+import React from 'react';
+import Toggle from './Toggle';
+
+function App() {
+  return (
+    <div style={{ padding: '1rem' }}>
+      <h2>Simple Compound Component Example</h2>
+      <Toggle>
+        <Toggle.On> The toggle is ON</Toggle.On>
+        <Toggle.Off> The toggle is OFF</Toggle.Off>
+        <Toggle.Button />
+      </Toggle>
+    </div>
+  );
+}
+
+export default App;
+
+New Strict Mode 
+Strict mode introduced new behaviour to help apps to prepare for concurrent rendering 
+
+iport React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+StrictMode checks only run in development mode, not in production
+It’s safe to wrap your entire app or just parts of it in StrictMode.
+ForwordRef
+Forward Refs are used when you want to pass a ref from a parent to a child functional component, especially when the child is not a DOM element, but a custom component.
+
+
+example 
+
+import React, { useRef, forwardRef } from 'react';
+
+
+const CustomInput = forwardRef((props, ref) => (
+  <input ref={ref} type="text" {...props} />
+));
+
+
+function Parent() {
+  const inputRef = useRef();
+
+  const handleFocus = () => {
+    inputRef.current.focus();
+  };
+
+  return (
+    <div>
+      <CustomInput ref={inputRef} placeholder="Forwarded Ref Input" />
+      <button onClick={handleFocus}>Focus</button>
+    </div>
+  );
+}
+
+   
+Forword reff
+forwardRef is a higher-order function that allows you to pass a ref from a parent component to a child component, which then forwards that ref to a DOM node or another component. This enables parent components to access or manipulate a child component’s DOM element.
+
+import React, { useRef, forwardRef } from 'react';
+
+// Child component accepting forwarded ref
+const CustomInput = forwardRef((props, ref) => (
+  <input ref={ref} type="text" {...props} />
+));
+
+// Parent component using the forwarded ref
+function Parent() {
+  const inputRef = useRef();
+
+  const handleFocus = () => {
+    inputRef.current.focus();
+  };
+
+  return (
+    <div>
+      <CustomInput ref={inputRef} placeholder="Forwarded Ref Input" />
+      <button onClick={handleFocus}>Focus</button>
+    </div>
+  );
+}
+
+
+============================================================
+Server-side Rendering (SSR)
+SSR is a Technique used in web development  to render the web page on the server rather than  the client 
+In SSR, the server generates the HTML content, which is then sent to the client  Browser.
+
+Benefits of server-side-rendering
+Improve performance 
+SEO benefits 
+Intial Page load 
+
+EX 
+App.js
+import React, { useState, useEffect } from 'react';
+
+function App({ initialData }) {
+    const [data, setData] = useState(initialData);
+
+    useEffect(() => {
+        if (!initialData) {
+            fetch('https://jsonplaceholder.typicode.com/posts/1')
+                .then(response => response.json())
+                .then(json => setData(json));
+        }
+    }, [initialData]);
+
+    if (!data) {
+        return <div>Loading...</div>;
+    }
+
+    return (
+        <div>
+            <h1>{data.title}</h1>
+            <p>{data.body}</p>
+        </div>
+    );
+}
+
+export default App;
+
+
+Server.js 
+// server.js
+const express = require('express');
+const React = require('react');
+const ReactDOMServer = require('react-dom/server');
+const fetch = require('node-fetch');
+const App = require('./src/App').default;
+
+const app = express();
+
+app.use(express.static('build'));
+
+app.get('*', async (req, res) => {
+    const data = await fetch('https://jsonplaceholder.typicode.com/posts/1').then(response => response.json());
+    const app = ReactDOMServer.renderToString(<App initialData={data} />);
+
+    const html = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>SSR Example with Data Fetching</title>
+            <link rel="stylesheet" href="/static/css/main.css">
+        </head>
+        <body>
+            <div id="root">${app}</div> <script src="data:text/javascript;base64,d2luZG93Ll9fSU5JVElBTF9EQVRBX189JHtKU09OLnN0cmluZ2lmeShkYXRhKX0=" defer></script> <script src="/static/js/bundle.js" defer data-deferred="1"></script> </body>
+        </html>
+    `;
+    res.send(html);
+});
+
+app.listen(3000, () => {
+    console.log('Server is running on port 3000');
+});
+
+Index.js
+// src/index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+
+const initialData = window.__INITIAL_DATA__;
+
+ReactDOM.hydrate(<App initialData={initialData} />, document.getElementById('root'));
+
+
+Hydration
+Hydration is the process of attaching event listeners and making the static HTML interactive on the client side. React uses ReactDOM.hydrate instead of ReactDOM.render for this purpose.
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+
+ReactDOM.hydrate(<App />, document.getElementById('root'));
+
+
+Redux
+Redux is a library for managing and centralizing application state . Redux provide a predictable state container, making state management more manageable and debugging easier.
+
+Why is Redux used 
+Predictable State: Redux makes state predictable by imposing certain restrictions on how and when updates can happen.
+Centralized State Management: All state is stored in a single place, making it easier to track changes and debug.
+Ease of Testing: Redux’s strict architecture makes it easier to write tests.
+Developer Tools: Redux comes with powerful developer tools that help in debugging and tracking state changes.
+
+
+Core Concepts of Redux
+Redux revolves around three core concepts:
+
+Store: The store holds the state of your application.
+Actions: Actions are plain JavaScript objects that describe changes in the state.
+Reducers: Reducers are pure functions that take the current state and an action, and return a new state.
+// Action
+const increment = () => {
+    return {
+        type: 'INCREMENT'
+    };
+};
+
+
+const counter = (state = 0, action) => {
+    switch (action.type) {
+        case 'INCREMENT':
+            return state + 1;
+        case 'DECREMENT':
+            return state - 1;
+        default:
+            return state;
+    }
+};
+
+
+const store = Redux.createStore(counter);
+
+
+store.dispatch(increment());
+console.log(store.getState()); 
+========================================================
+Middleware
+Middleware in Redux provides a third-party extension point between dispatching an action and the moment it reaches the reducer. Middleware can intercept actions, perform asynchronous tasks, log actions, modify actions, or dispatch additional actions.
+
+Example using Redux Thunk:
+Redux Thunk is a popular middleware for handling asynchronous logic in Redux. It allows action creators to return functions instead of plain objects, enabling delayed actions or side effects.
+
+ 
+Middleware: Redux Thunk intercepts fetchPosts() action creator, allowing it to dispatch actions asynchronously after fetching data from an API.
+Asynchronous Actions
+Redux itself is synchronous by nature, but with middleware like Redux Thunk, Redux Saga, or Redux Observable, you can handle asynchronous operations like fetching data or performing API calls.
+
+Example with Redux Thunk:
+// actions.js
+import axios from 'axios';
+
+export const fetchData = () => {
+  return async (dispatch) => {
+    dispatch({ type: 'FETCH_DATA_REQUEST' });
+
+    try {
+      const response = await axios.get('https://jsonplaceholder.typicode.com/posts');
+      dispatch({ type: 'FETCH_DATA_SUCCESS', payload: response.data });
+    } catch (error) {
+      dispatch({ type: 'FETCH_DATA_FAILURE', payload: error.message });
+    }
+  };
+};
+
+// store.js
+import { createStore, applyMiddleware } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import rootReducer from './reducers'; // assuming you have a rootReducer
+
+const store = createStore(
+  rootReducer,
+  composeWithDevTools(
+    applyMiddleware(...middlewares)
+  )
+);
+
+export default store;
+
+
+// index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import App from './App';
+import store from './store';
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+);
+
+
+
+The Redux Toolkit package is intended to be the standard way to write Redux logic. It was originally created to help address three common concerns about Redux:
+
+"Configuring a Redux store is too complicated"
+"I have to add a lot of packages to get Redux to do anything useful"
+"Redux requires too much boilerplate code"
+Why use Redux Toolkit?
+Less boilerplate
+
+Built-in best practices
+
+Integrated tools like createSlice, createAsyncThunk
+
+Great dev experience
+
+Counter example  using redux toolkit 
+
+counterSlice.js
+import { createSlice } from '@reduxjs/toolkit';
+
+const counterSlice = createSlice({
+  name: 'counter',
+  initialState: { value: 0 },
+  reducers: {
+    increment: (state) => { state.value += 1 },
+    decrement: (state) => { state.value -= 1 },
+    incrementByAmount: (state, action) => { state.value += action.payload },
+  },
+});
+
+export const { increment, decrement, incrementByAmount } = counterSlice.actions;
+export default counterSlice.reducer;
+
+
+store.js
+import { configureStore } from '@reduxjs/toolkit';
+import counterReducer from '../features/counter/counterSlice';
+
+export const store = configureStore({
+  reducer: {
+    counter: counterReducer,
+  },
+});
+
+ index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { store } from './app/store';
+import App from './App';
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+);
+
+
+ Counter.js
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { increment, decrement, incrementByAmount } from './features/counter/counterSlice';
+
+const Counter = () => {
+  const count = useSelector((state) => state.counter.value);
+  const dispatch = useDispatch();
+
+  return (
+    <div>
+      <h2>Counter: {count}</h2>
+      <button onClick={() => dispatch(decrement())}>-</button>
+      <button onClick={() => dispatch(increment())}>+</button>
+      <button onClick={() => dispatch(incrementByAmount(5))}>+5</button>
+    </div>
+  );
+};
+
+export default Counter;
+
+
